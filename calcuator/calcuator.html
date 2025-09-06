@@ -3,50 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高级科学计算器</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="math.js"></script>
+    <title>科学计算器</title>
+    <style>
+        /* 内联CSS样式，避免路径问题 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .calculator {
+            background-color: #222;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 300px;
+        }
+        
+        .display {
+            background-color: #333;
+            color: white;
+            font-size: 2em;
+            padding: 15px;
+            text-align: right;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            min-height: 60px;
+            word-wrap: break-word;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        button {
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #666;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #777;
+        }
+        
+        .operator {
+            background-color: #ff9500;
+        }
+        
+        .operator:hover {
+            background-color: #ffaa33;
+        }
+        
+        .equals {
+            background-color: #ff9500;
+        }
+    </style>
 </head>
 <body>
     <div class="calculator">
         <div class="display" id="display">0</div>
         <div class="buttons">
-            <button onclick="appendToDisplay('π')">π</button>
-            <button onclick="appendToDisplay('e')">e</button>
-            <button onclick="appendToDisplay('sin(')">sin</button>
-            <button onclick="appendToDisplay('cos(')">cos</button>
-            <button onclick="appendToDisplay('tan(')">tan</button>
-            <button onclick="clearDisplay()" class="operator">C</button>
-            <button onclick="deleteLast()" class="operator">⌫</button>
-
-            <button onclick="appendToDisplay('^')">^</button>
-            <button onclick="appendToDisplay('sqrt(')">√</button>
-            <button onclick="appendToDisplay('log(')">log</button>
-            <button onclick="appendToDisplay('(')">(</button>
-            <button onclick="appendToDisplay(')')">)</button>
-            <button onclick="appendToDisplay('%')">%</button>
-            <button onclick="appendToDisplay('/')" class="operator">/</button>
-
-            <button onclick="appendToDisplay('7')">7</button>
-            <button onclick="appendToDisplay('8')">8</button>
-            <button onclick="appendToDisplay('9')">9</button>
-            <button onclick="appendToDisplay('*')" class="operator">×</button>
-
-            <button onclick="appendToDisplay('4')">4</button>
-            <button onclick="appendToDisplay('5')">5</button>
-            <button onclick="appendToDisplay('6')">6</button>
-            <button onclick="appendToDisplay('-')" class="operator">-</button>
-
-            <button onclick="appendToDisplay('1')">1</button>
-            <button onclick="appendToDisplay('2')">2</button>
-            <button onclick="appendToDisplay('3')">3</button>
-            <button onclick="appendToDisplay('+')" class="operator">+</button>
-
-            <button onclick="appendToDisplay('0')">0</button>
-            <button onclick="appendToDisplay('.')">.</button>
-            <button onclick="calculate()" class="equals operator">=</button>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+            <button data-action="clear">C</button>
+            <button data-action="backspace">⌫</button>
+            <button data-action="percent">%</button>
+            <button data-action="divide" class="operator">/</button>
+            
+            <button data-value="7">7</button>
+            <button data
