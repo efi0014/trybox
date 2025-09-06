@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页版超级数学工具</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/mathjs/lib/browser/math.js"></script>
+    <script src="https://unpkg.com/algebra.js/build/algebra-0.2.6.min.js"></script>
+    <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>超级数学工具</h1>
+            <nav class="tabs">
+                <button class="tab-link active" data-tab="calculator">计算器</button>
+                <button class="tab-link" data-tab="solver">方程求解</button>
+                <button class="tab-link" data-tab="plotter">函数图像</button>
+                <button class="tab-link" data-tab="converter">单位换算</button>
+            </nav>
+        </header>
+
+        <main>
+            <div id="calculator" class="tab-content active">
+                <div class="calculator-grid">
+                    <div class="display" id="calc-display">0</div>
+                    <button data-key="clear">AC</button>
+                    <button data-key="sign">+/-</button>
+                    <button data-key="%">%</button>
+                    <button data-key="/" class="operator">÷</button>
+                    <button data-key="sin">sin</button>
+                    <button data-key="7">7</button>
+                    <button data-key="8">8</button>
+                    <button data-key="9">9</button>
+                    <button data-key="*" class="operator">×</button>
+                    <button data-key="cos">cos</button>
+                    <button data-key="4">4</button>
+                    <button data-key="5">5</button>
+                    <button data-key="6">6</button>
+                    <button data-key="-" class="operator">−</button>
+                    <button data-key="tan">tan</button>
+                    <button data-key="1">1</button>
+                    <button data-key="2">2</button>
+                    <button data-key="3">3</button>
+                    <button data-key="+" class="operator">+</button>
+                    <button data-key="log">log</button>
+                    <button data-key="^">xʸ</button>
+                    <button data-key="0" class="zero">0</button>
+                    <button data-key=".">.</button>
+                    <button data-key="=" class="operator">=</button>
+                    <button data-key="sqrt">√</button>
+                </div>
+            </div>
+
+            <div id="solver" class="tab-content">
+                <h2>求解代数方程</h2>
+                <p>输入方程，例如：<code>x^2 + 2*x - 8 = 0</code></p>
+                <div class="input-group">
+                    <input type="text" id="equation-input" placeholder="输入关于 x 的方程">
+                    <button id="solve-equation-btn">求解</button>
+                </div>
+                <div id="solver-result" class="result-box"></div>
+            </div>
+
+            <div id="plotter" class="tab-content">
+                <h2>绘制函数图像</h2>
+                <p>输入一个关于 x 的函数，例如：<code>sin(x) * x</code></p>
+                <div class="input-group">
+                    <input type="text" id="function-input" placeholder="例如: x^3 - 6*x">
+                    <button id="plot-function-btn">绘制</button>
+                </div>
+                <div id="plot-container"></div>
+            </div>
+
+            <div id="converter" class="tab-content">
+                <h2>单位换算</h2>
+                <p>使用 math.js 语法, 例如: <code>5 cm to inch</code></p>
+                <div class="input-group">
+                    <input type="text" id="unit-input" placeholder="例如: 10 kg to lbs">
+                    <button id="convert-unit-btn">换算</button>
+                </div>
+                <div id="converter-result" class="result-box"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
