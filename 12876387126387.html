@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquid Glass 风格网页</title>
+    <style>
+        /* --- 1. 全局和主题变量 --- (未改动) */
+        :root {
+            --background-start: #fbc2eb;
+            --background-end: #a6c1ee;
+            --text-color: #333;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark-mode {
+            --background-start: #232526;
+            --background-end: #414345;
+            --text-color: #f1f1f1;
+            --glass-bg: rgba(0, 0, 0, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- 2. 基础布局 --- (未改动) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 100px 2rem 2rem 2rem; 
+            min-height: 100vh;
+            box-sizing: border-box; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(45deg, var(--background-start), var(--background-end));
+            transition: background 0.5s ease;
+            overflow: hidden; 
+        }
+
+        /* --- 3. 动态背景形状 --- (未改动) */
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .background-shapes div {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+
+        .background-shapes div:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            background: #ffafbd;
+            top: 10%;
+            left: 15%;
+            animation: move 15s infinite alternate;
+        }
+
+        .background-shapes div:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            background: #a2d2ff;
+            bottom: 5%;
+            right: 10%;
+            animation: move 20s infinite alternate-reverse;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            to {
+                transform: translate(100px, 50px) rotate(180deg);
+            }
+        }
+        
+        /* --- 4. Liquid Glass 通用样式 --- (未改动) */
+        .liquid-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 var(--glass-shadow),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            transition: background 0.5s ease, border 0.5s ease;
+            color: var(--text-color);
+        }
+
+        /* --- 5. 顶部标题栏 --- (未改动) */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .navbar .title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        /* --- 6. 链接卡片布局 --- (新增) */
+        .link-cards-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap; /* 在小屏幕上换行 */
+        }
+        
+        .link-card {
+            width: 250px;
+            padding: 1.5rem;
+            border-radius: 20px;
+            text-align: center;
+        }
+        
+        .link-card h3 {
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+        }
+        
+        .link-card p {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            min-height: 50px; /* 保证卡片高度大致对齐 */
+        }
+
+        /* --- 7. 按钮样式 --- (未改动，但应用于新卡片中) */
+        .glass-button {
+            display: inline-block;
+            padding: 12px 24px;
+            text-decoration: none;
+            color: var(--text-color);
+            border-radius: 12px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 15px var(--glass-shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--glass-shadow);
+        }
+
+        /* --- 8. 明暗模式切换卡片 --- (未改动) */
+        .theme-card-container {
+            position: fixed;
+            top: 15px; 
+            right: 2rem;
+            z-index: 11;
+        }
+        
+        .theme-card {
+            padding: 1rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .theme-card p {
+            margin: 0 0 0.75rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .theme-card .glass-button {
+             padding: 8px 16px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="background-shapes">
+        <div></div>
+        <div></div>
+    </div>
+
+    <!-- 顶部标题栏 (未改动) -->
+    <header class="navbar liquid-glass">
+        <div class="title">没啥屁用的主页</div>
+    </header>
+
+    <!-- 明暗模式切换器 (未改动) -->
+    <div class="theme-card-container">
+        <div class="theme-card liquid-glass">
+            <p id="theme-status">当前模式：明亮</p>
+            <button id="themeToggleButton" class="glass-button">切换</button>
+        </div>
+    </div>
+    
+    <!-- 主要内容区域 (已修改) -->
+    <div class="link-cards-container">
+        <!-- 卡片1: 谷歌 -->
+        <div class="link-card liquid-glass">
+            <h3>前往爷的计算器</h3>
+            <p>答辩计算器，不如用自带的</p>
+            <a href="https://trybox.dpdns.org/calauator" target="_blank" class="glass-button">访问爷的计算器</a>
+        </div>
+        
+        <!-- 卡片2: GitHub -->
+        <div class="link-card liquid-glass">
+            <h3>让我访问服务器官网</h3>
+            <p>没啥屌用的官网</p>
+            <a href="https://trybox.dpdns.org/server" target="_blank" class="glass-button">访问服务器官网</a>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript (未改动)
+        const themeToggleButton = document.getElementById('themeToggleButton');
+        const themeStatus = document.getElementById('theme-status');
+        const body = document.body;
+        
+        function applyTheme(theme) {
+            if (theme === 'dark-mode') {
+                body.classList.add('dark-mode');
+                themeStatus.textContent = '当前模式：黑暗';
+            } else {
+                body.classList.remove('dark-mode');
+                themeStatus.textContent = '当前模式：明亮';
+            }
+        }
+
+        const currentTheme = localStorage.getItem('theme');
+        applyTheme(currentTheme);
+
+        themeToggleButton.addEventListener('click', () => {
+            let newTheme;
+            if (body.classList.contains('dark-mode')) {
+                newTheme = ''; 
+            } else {
+                newTheme = 'dark-mode';
+            }
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+    </script>
+
+</body>
+</html>
