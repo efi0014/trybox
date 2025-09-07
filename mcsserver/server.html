@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 这里是你的服务器名字，会显示在浏览器标签页上 -->
+    <title>你的服务器名字 - 官方网站</title>
+    <meta name="description" content="这里是你的服务器简介，会显示在搜索引擎结果中。">
+    <meta name="keywords" content="Minecraft, 我的世界, 服务器, 生存, 模组, 创造">
+    <!-- 引入一个图标库，让我们可以使用漂亮的图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS样式开始 -->
+    <style>
+        /* 全局样式和字体设置 */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #5a9b43; /* 主题绿色，你可以换成你喜欢的颜色 */
+            --dark-color: #333;
+            --light-color: #f4f4f4;
+            --background-dark: rgba(0, 0, 0, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth; /* 让页面内跳转更平滑 */
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            background-color: #fff;
+            color: var(--dark-color);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            overflow: hidden;
+            padding: 0 20px;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+            display: inline-block;
+        }
+
+        section {
+            padding: 4rem 0;
+        }
+
+        /* 导航栏样式 */
+        header {
+            background: var(--background-dark);
+            color: #fff;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s;
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        header .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        header .logo img {
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 5px; /* 让Logo变圆角 */
+        }
+
+        header ul {
+            display: flex;
+            list-style: none;
+        }
+
+        header ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s;
+            font-weight: bold;
+        }
+
+        header ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        /* 主视觉区域样式 */
+        .hero {
+            height: 100vh;
+            /* 在这里换上你的背景图 */
+            background: url('https://images.unsplash.com/photo-1618331323717-a16293a61439?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover; 
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* 背景遮罩，让文字更清晰 */
+        }
+
+        .hero-content {
+            z-index: 1;
+        }
+
+        .hero h2 {
+            font-size: 4rem;
+            border: none;
+        }
+
+        .hero h2 span {
+            color: var(--primary-color);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .server-ip {
+            background: var(--background-dark);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            display: inline-block;
+            font-size: 1.2rem;
+            border: 2px solid var(--primary-color);
+            margin-top: 1.5rem;
+        }
+
+        .server-ip span {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .server-ip button {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 1rem;
+            transition: background 0.3s;
+        }
+
+        .server-ip button:hover {
+            background: #4a8835;
+        }
+
+        .status {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .status .online {
+            color: #2ecc71;
+            font-size: 1.5em; /* 让圆点更明显 */
+            vertical-align: middle;
+        }
+
+        /* 特色区域样式 */
+        .features {
+            background: var(--light-color);
+            text-align: center;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-item i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 关于我们区域样式 */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .about-content img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .about-content h2 {
+            text-align: left;
+            display: block;
+            border: none;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 1rem;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* 游戏截图区域样式 */
+        .gallery {
+            background: var(--light-color);
+            text-align: center;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-grid img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .gallery-grid img:hover {
+            transform: scale(1.05);
+        }
+
+        /* 加入我们区域样式 */
+        .join {
+            /* 换一张暗色调的背景图 */
+            background: url('https://images.unsplash.com/photo-1593435348081-334335165181?q=80&w=1932&auto=format&fit=crop') no-repeat center center/cover; 
+            color: #fff;
+            text-align: center;
+            position: relative;
+        }
+
+        .join::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .join .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .join h2 {
+            font-size: 3rem;
+            border-color: #fff;
+        }
+
+        .server-ip-large {
+            background: rgba(0,0,0,0.5);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 2px solid var(--primary-color);
+            display: inline-block;
+            margin: 2rem 0;
+        }
+
+        .server-ip-large p {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .server-ip-large button {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .server-ip-large button:hover {
+            background: #4a8835;
+        }
+
+        /* 页脚样式 */
+        footer {
+            background: var(--dark-color);
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        /* 响应式设计，适配手机 */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 2rem;
+            }
+
+            header nav {
+                flex-direction: column;
+            }
+
+            header .logo {
+                margin-bottom: 0.5rem;
+            }
+
+            header ul {
+                padding-top: 0.5rem;
+                flex-wrap: wrap; /* 换行 */
+                justify-content: center;
+            }
+
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .server-ip {
+                padding: 0.8rem 1rem;
+                display: block;
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+            .server-ip button {
+                margin-top: 0.5rem;
+                margin-left: 0;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .about-content img {
+                margin-bottom: 2rem;
+            }
+
+            .join h2 {
+                font-size: 2.2rem;
+            }
+
+            .server-ip-large p {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <!-- CSS样式结束 -->
+</head>
+<body>
+
+    <!-- 顶部导航栏 -->
+    <header>
+        <nav>
+            <!-- 左边的服务器Logo和名字 -->
+            <a href="#" class="logo">
+                <!-- 建议放一个64x64像素的服务器Logo图片，我这里用了一个占位符 -->
+                <img src="https://www.minecraft.net/etc.clientlibs/minecraft/clientlibs/main/resources/img/minecraft-creeper-face.jpg" alt="服务器Logo">
+                <h1>你的服务器名字</h1>
+            </a>
+            <!-- 右边的导航链接 -->
+            <ul>
+                <li><a href="#features">服务器特色</a></li>
+                <li><a href="#about">关于我们</a></li>
+                <li><a href="#gallery">游戏截图</a></li>
+                <li><a href="#join">加入我们</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 主视觉区域 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>欢迎来到<span>你的服务器名字</span></h2>
+            <p>这里写一句你服务器的宣传口号，例如：一个充满创造与冒险的方块世界！</p>
+            <div class="server-ip">
+                <span>服务器IP地址: <b id="ip-address">play.你的服务器.com</b></span>
+                <button onclick="copyIp(this)">点击复制</button>
+            </div>
+            <div class="status">
+                <p>服务器状态: <span class="online">●</span> 运行中</p>
+                <!-- 这里可以手动修改，或者之后用插件实现自动更新 -->
+                <p>在线人数: 25 / 100</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务器特色区域 -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>服务器特色</h2>
+            <div class="features-grid">
+                <!-- 特色1 -->
+                <div class="feature-item">
+                    <i class="fas fa-server"></i>
+                    <h3>稳定流畅</h3>
+                    <p>我们采用高性能服务器，保证您流畅的游戏体验，拒绝卡顿。</p>
+                </div>
+                <!-- 特色2 -->
+                <div class="feature-item">
+                    <i class="fas fa-users"></i>
+                    <h3>和谐社区</h3>
+                    <p>我们拥有一个友爱互助的玩家社区，欢迎每一位新伙伴的加入。</p>
+                </div>
+                <!-- 特色3 -->
+                <div class="feature-item">
+                    <i class="fas fa-puzzle-piece"></i>
+                    <h3>丰富玩法</h3>
+                    <p>无论是生存、RPG还是小游戏，这里总有你喜欢的玩法。</p>
+                </div>
+                <!-- 特色4 (可以自己增加更多) -->
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>公平公正</h3>
+                    <p>我们有完善的反作弊系统和管理团队，营造公平的游戏环境。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我们/服务器简介区域 -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <!-- 建议在这里放一张服务器主城的图片 -->
+                <img src="https://images.unsplash.com/photo-1620371351235-6675775b35c1?q=80&w=1974&auto=format&fit=crop" alt="服务器主城">
+                <div>
+                    <h2>关于我们</h2>
+                    <p>在这里详细介绍你的服务器。例如服务器的创建历史、核心理念、主要玩法（生存、创造、RPG等）、安装了哪些有趣的插件或模组。</p>
+                    <p>让玩家感觉到你们是一个用心在做服务器的团队，并对你们的世界产生向往。</p>
+                    <a href="你的QQ群链接或Discord链接" target="_blank" class="btn"><i class="fab fa-qq"></i> 加入我们的QQ群</a>
+                    <!-- 如果有Discord，可以添加下面这行 -->
+                    <!-- <a href="你的Discord链接" target="_blank" class="btn"><i class="fab fa-discord"></i> 加入Discord</a> -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 游戏截图区域 -->
+    <section id="gallery" class="gallery">
+        <div class="container">
+            <h2>游戏截图</h2>
+            <div class="gallery-grid">
+                <!-- 建议尺寸 800x600 像素, 我用了一些占位图 -->
+                <img src="https://images.unsplash.com/photo-1611261353245-9363c4ff192e?q=80&w=2070&auto=format&fit=crop" alt="游戏截图1">
+                <img src="https://images.unsplash.com/photo-1619623838661-d7f353123842?q=80&w=2070&auto=format&fit=crop" alt="游戏截图2">
+                <img src="https://images.unsplash.com/photo-1620371351113-d30501a5ada8?q=80&w=1974&auto=format&fit=crop" alt="游戏截图3">
+                <img src="https://images.unsplash.com/photo-1611068813580-b2717a650d20?q=80&w=2070&auto=format&fit=crop" alt="游戏截图4">
+                <img src="https://images.unsplash.com/photo-1593435552309-e5c15a7732a3?q=80&w=1932&auto=format&fit=crop" alt="游戏截图5">
+                <img src="https://images.unsplash.com/photo-1605333141183-1a613397984f?q=80&w=1974&auto=format&fit=crop" alt="游戏截图6">
+            </div>
+        </div>
+    </section>
+
+    <!-- 加入我们区域 -->
+    <section id="join" class="join">
+        <div class="container">
+            <h2>立即加入我们！</h2>
+            <p>还在等什么？开启你的冒险之旅吧！</p>
+            <div class="server-ip-large">
+                <p>服务器IP: <b id="ip-address-large">play.你的服务器.com</b></p>
+                <button onclick="copyIpLarge(this)">一键复制IP</button>
+            </div>
+            <!-- 如果你的服务器需要专用客户端，可以在这里提供下载链接 -->
+            <!-- <a href="你的客户端下载链接" class="btn">下载专用客户端</a> -->
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>&copy; 2025 你的服务器名字. All Rights Reserved.</p>
+        <p>网站由 Gemini 强力驱动</p>
+    </footer>
+
+    <!-- JavaScript代码开始 -->
+    <script>
+        // 复制主视觉区域的IP
+        function copyIp(buttonElement) {
+            // 获取IP地址文本
+            const ipAddress = document.getElementById('ip-address').innerText;
+            // 使用 Clipboard API 写入剪贴板
+            navigator.clipboard.writeText(ipAddress).then(() => {
+                // 成功后临时改变按钮文字
+                const originalText = buttonElement.innerText;
+                buttonElement.innerText = '复制成功!';
+                setTimeout(() => {
+                    buttonElement.innerText = originalText;
+                }, 1500); // 1.5秒后恢复
+            }).catch(err => {
+                // 失败提示
+                console.error('无法复制IP: ', err);
+                alert("复制失败，您的浏览器可能不支持或权限不足，请手动复制。");
+            });
+        }
+
+        // 复制“加入我们”区域的IP
+        function copyIpLarge(buttonElement) {
+            const ipAddress = document.getElementById('ip-address-large').innerText;
+            navigator.clipboard.writeText(ipAddress).then(() => {
+                // 成功后临时改变按钮文字
+                const originalText = buttonElement.innerText;
+                buttonElement.innerText = '复制成功!';
+                setTimeout(() => {
+                    buttonElement.innerText = originalText;
+                }, 1500); // 1.5秒后恢复
+            }).catch(err => {
+                console.error('无法复制IP: ', err);
+                alert("复制失败，您的浏览器可能不支持或权限不足，请手动复制。");
+            });
+        }
+
+        // 监听滚动事件，让导航栏背景变化
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.background = '#222';
+            } else {
+                header.style.background = 'rgba(0, 0, 0, 0.7)';
+            }
+        });
+    </script>
+    <!-- JavaScript代码结束 -->
+</body>
+</html>
