@@ -1,4 +1,4 @@
-import HTML from './index.html';
+import HTML from '/ai/index.html';
 
 export default {
   async fetch(request, env) {
