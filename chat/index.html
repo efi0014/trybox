@@ -14,8 +14,8 @@
             --user-bubble-bg: #e8f0fe; --user-bubble-text: #1967d2; --assistant-bubble-bg: #f8f9fa;
             --assistant-bubble-text: #3c4043; --button-bg: #e8f0fe; --button-hover-bg: #d2e3fc;
             --button-disabled-bg: #f1f3f4; --button-icon-color: #1967d2; --button-icon-disabled-color: #9aa0a6;
-            --code-bg: #282c34; --header-icon-color: #5f6368;
-            --fab-bg: #1a73e8; --fab-hover-bg: #185abc;
+            --code-bg: #282c34; --header-icon-color: #5f6368; --fab-bg: #1a73e8; --fab-hover-bg: #185abc;
+            --sidebar-bg: #ffffff; --sidebar-border: #e0e0e0;
         }
         html.dark {
             --bg-color: #131314; --text-color: #e8eaed; --chat-bg: #1e1f20; --input-bg: #1e1f20;
@@ -24,26 +24,32 @@
             --assistant-bubble-text: #e8eaed; --button-bg: #28354c; --button-hover-bg: #3a4760;
             --button-disabled-bg: #3c4043; --button-icon-color: #a8c7fa; --button-icon-disabled-color: #7f8c8d;
             --header-icon-color: #9aa0a6; --fab-bg: #8ab4f8; --fab-hover-bg: #a0c2f8;
+            --sidebar-bg: #1e1f20; --sidebar-border: #3c4043;
         }
-        body { font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        #app-container { position: relative; display: flex; flex-direction: column; height: 100%; width: 100%; max-width: 800px; margin: 0 auto; padding: 0 1rem; box-sizing: border-box; }
-        #app-header { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; flex-shrink: 0; }
-        #app-title { font-size: 1.25rem; font-weight: 500; }
-        #theme-toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; border-radius: 50%; background-color: transparent; cursor: pointer; color: var(--header-icon-color); }
-        #theme-toggle:hover { background-color: rgba(0,0,0,0.05); }
-        html.dark #theme-toggle:hover { background-color: rgba(255,255,255,0.08); }
-        #chat-container { flex: 1; overflow-y: auto; padding-top: 5rem; /* Increased padding to make space for FAB */ scrollbar-width: thin; scroll-behavior: smooth;}
-        #chat-container::-webkit-scrollbar { width: 6px; }
-        #chat-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-        #form-container { padding: 1rem 0; position: relative; }
-        #chat-form { position: relative; display: flex; align-items: flex-end; background-color: var(--input-bg); border-radius: 28px; box-shadow: var(--input-shadow); padding: 0.5rem; }
+        body { font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-color); display: flex; height: 100vh; overflow: hidden; }
+        #app-wrapper { display: flex; width: 100%; height: 100%; }
+        #sidebar { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; transition: transform 0.3s ease; transform: translateX(0); }
+        #sidebar.collapsed { transform: translateX(-100%); }
+        #sidebar-header { padding: 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--sidebar-border); }
+        #new-chat-button { font-size: 0.9rem; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; cursor: pointer; }
+        #history-list { flex-grow: 1; overflow-y: auto; padding: 0.5rem; }
+        .history-item { padding: 0.75rem 1rem; margin-bottom: 0.5rem; border-radius: 8px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-item:hover { background-color: var(--assistant-bubble-bg); }
+        #app-container { position: relative; display: flex; flex-direction: column; height: 100%; width: 100%; flex-grow: 1; }
+        #app-header { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 1rem; flex-shrink: 0; }
+        #menu-toggle, #theme-toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; border-radius: 50%; background-color: transparent; cursor: pointer; color: var(--header-icon-color); }
+        #menu-toggle:hover, #theme-toggle:hover { background-color: rgba(0,0,0,0.05); }
+        html.dark #menu-toggle:hover, html.dark #theme-toggle:hover { background-color: rgba(255,255,255,0.08); }
+        #chat-container { flex: 1; overflow-y: auto; padding: 4rem 1rem 1rem 1rem; scroll-behavior: smooth;}
+        #chat-container::-webkit-scrollbar { width: 6px; } #chat-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        #form-container { padding: 1rem; }
+        #chat-form { position: relative; display: flex; align-items: flex-end; background-color: var(--input-bg); border-radius: 28px; box-shadow: var(--input-shadow); padding: 0.5rem; max-width: 800px; margin: 0 auto; }
         #chat-input { width: 100%; border: none; outline: none; padding: 0.75rem 1rem; font-size: 1rem; line-height: 1.5; background-color: transparent; color: var(--text-color); resize: none; max-height: 200px; overflow-y: auto; }
         #submit-button { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: none; border-radius: 50%; background-color: var(--button-bg); cursor: pointer; transition: background-color 0.2s ease; flex-shrink: 0; }
-        #submit-button svg { color: var(--button-icon-color); }
-        #submit-button:hover { background-color: var(--button-hover-bg); }
+        #submit-button svg { color: var(--button-icon-color); } #submit-button:hover { background-color: var(--button-hover-bg); }
         #submit-button:disabled { background-color: var(--button-disabled-bg); cursor: not-allowed; }
         #submit-button:disabled svg { color: var(--button-icon-disabled-color); }
-        .message-wrapper { display: flex; margin-bottom: 1.5rem; }
+        .message-wrapper { display: flex; margin-bottom: 1.5rem; max-width: 800px; margin-left: auto; margin-right: auto; }
         .message-bubble { padding: 1rem 1.25rem; border-radius: 1.5rem; max-width: 90%; word-wrap: break-word; line-height: 1.6; font-size: 1rem; }
         .user { justify-content: flex-end; }
         .user .message-bubble { background-color: var(--user-bubble-bg); color: var(--user-bubble-text); border-bottom-right-radius: 0.5rem; }
@@ -52,68 +58,77 @@
         .markdown-body code { font-family: 'Fira Code', 'Courier New', monospace; background-color: var(--assistant-bubble-bg); padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 6px; }
         html.dark .markdown-body code { background-color: var(--bg-color); }
         .markdown-body pre > code { background: none; padding: 0; }
-        .markdown-body p { margin: 0 0 1rem 0; }
-        .markdown-body p:last-child { margin-bottom: 0; }
+        .markdown-body p { margin: 0 0 1rem 0; } .markdown-body p:last-child { margin-bottom: 0; }
         .markdown-body h1, .markdown-body h2, .markdown-body h3 { border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; margin-bottom: 1rem; }
         .markdown-body ul, .markdown-body ol { padding-left: 2em; }
-        /* Floating Action Button (FAB) for models */
         #fab-container { position: absolute; top: 4.5rem; left: 50%; transform: translateX(-50%); z-index: 10; text-align: center; }
-        .fab { width: 48px; height: 48px; background-color: var(--fab-bg); color: white; border: none; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .fab { width: 48px; height: 48px; background-color: var(--fab-bg); color: white; border: none; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; }
         html.dark .fab { color: #1e1f20; }
         .fab:hover { background-color: var(--fab-hover-bg); }
-        .fab-options { display: flex; flex-direction: column; align-items: center; gap: 1rem; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-1rem); opacity: 0; visibility: hidden; transition: all 0.3s ease; }
-        .fab-container.active .fab-options { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-        .fab-option { width: 40px; height: 40px; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; font-size: 0.7rem; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .fab-option:hover { transform: scale(1.1); }
+        #fab-container.active .fab { transform: rotate(45deg); }
+        .fab-options { display: flex; flex-direction: column; align-items: center; gap: 1rem; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); transition: all 0.3s ease; pointer-events: none; }
+        .fab-option { width: 40px; height: 40px; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; font-size: 0.7rem; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; opacity: 0; transform: translateY(20px); }
+        #fab-container.active .fab-options { pointer-events: auto; }
+        #fab-container.active .fab-option { opacity: 1; transform: translateY(-1rem); }
+        .fab-option:hover { transform: scale(1.1) translateY(-1rem); }
         .fab-option.active { background-color: var(--fab-bg); color: white; }
         html.dark .fab-option.active { color: #1e1f20; }
-        /* Thinking Animation */
         .thinking-animation { display: flex; align-items: center; gap: 4px; }
         .thinking-animation span { width: 8px; height: 8px; background-color: var(--assistant-bubble-text); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
-        .thinking-animation span:nth-child(1) { animation-delay: -0.32s; }
-        .thinking-animation span:nth-child(2) { animation-delay: -0.16s; }
+        .thinking-animation span:nth-child(1) { animation-delay: -0.32s; } .thinking-animation span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+        @media (max-width: 768px) { #sidebar { position: absolute; z-index: 100; transform: translateX(-100%); } #sidebar.collapsed { transform: translateX(-100%); } #sidebar.open { transform: translateX(0); } }
     </style>
 </head>
 <body>
-    <div id="app-container">
-        <header id="app-header">
-            <span id="app-title">AI Chat</span>
-            <button id="theme-toggle" title="Toggle dark mode">
-                <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-            </button>
-        </header>
-
-        <div id="fab-container">
-            <div id="fab-options" class="fab-options"></div>
-            <button id="fab" class="fab" title="选择模型">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"></path><path d="m12 14-4-4"></path></svg>
-            </button>
-        </div>
-
-        <div id="chat-container">
-            <div id="welcome-message" style="text-align: center; padding-top: 20vh;">
-                <h1 style="font-size: 3rem; font-weight: 500;">Hello, I'm your AI assistant</h1>
-                <p style="font-size: 1.2rem; color: #5f6368;">How can I help you today?</p>
+    <div id="app-wrapper">
+        <aside id="sidebar">
+            <div id="sidebar-header">
+                <button id="new-chat-button">新建对话</button>
             </div>
-        </div>
+            <div id="history-list"></div>
+        </aside>
 
-        <div id="form-container">
-            <form id="chat-form">
-                <textarea id="chat-input" placeholder="在此输入消息..." rows="1"></textarea>
-                <button id="submit-button" type="submit">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path>
-                    </svg>
+        <div id="app-container">
+            <header id="app-header">
+                <button id="menu-toggle" title="Toggle History">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
-            </form>
+                <span id="app-title">AI Chat</span>
+                <button id="theme-toggle" title="Toggle dark mode">
+                    <svg id="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+            </header>
+
+            <div id="fab-container">
+                <div id="fab-options" class="fab-options"></div>
+                <button id="fab" class="fab" title="选择模型">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="plus-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </div>
+
+            <div id="chat-container">
+                <div id="welcome-message" style="text-align: center; padding-top: 20vh;">
+                    <h1 style="font-size: 3rem; font-weight: 500;">Hello!</h1>
+                </div>
+            </div>
+
+            <div id="form-container">
+                <form id="chat-form">
+                    <textarea id="chat-input" placeholder="在此输入消息..." rows="1"></textarea>
+                    <button id="submit-button" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- MODELS ---
             const models = [
                 { id: '@cf/meta/llama-3-8b-instruct', name: 'L3' },
                 { id: '@cf/meta/llama-3.1-8b-instruct', name: 'L3.1' },
@@ -121,12 +136,27 @@
                 { id: '@cf/google/gemma-7b-it', name: 'G7B' },
             ];
             let selectedModel = models[0].id;
+            let currentChatId = null;
+            let allChats = {};
 
-            // --- THEME TOGGLE ---
+            const docElement = document.documentElement;
             const themeToggle = document.getElementById('theme-toggle');
             const sunIcon = document.getElementById('theme-icon-sun');
             const moonIcon = document.getElementById('theme-icon-moon');
-            const docElement = document.documentElement;
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const newChatButton = document.getElementById('new-chat-button');
+            const historyList = document.getElementById('history-list');
+            const chatContainer = document.getElementById('chat-container');
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const submitButton = document.getElementById('submit-button');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const fabContainer = document.getElementById('fab-container');
+            const fab = document.getElementById('fab');
+            const fabOptions = document.getElementById('fab-options');
+
+            // --- THEME LOGIC ---
             const applyTheme = (theme) => {
                 const isDark = theme === 'dark';
                 docElement.classList.toggle('dark', isDark);
@@ -141,28 +171,20 @@
                 applyTheme(newTheme);
             });
 
-            // --- CHAT ELEMENTS ---
-            const chatContainer = document.getElementById('chat-container');
-            const chatForm = document.getElementById('chat-form');
-            const chatInput = document.getElementById('chat-input');
-            const submitButton = document.getElementById('submit-button');
-            const welcomeMessage = document.getElementById('welcome-message');
-
-            // --- FAB MODEL SELECTOR ---
-            const fabContainer = document.getElementById('fab-container');
-            const fab = document.getElementById('fab');
-            const fabOptions = document.getElementById('fab-options');
+            // --- SIDEBAR LOGIC ---
+            menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
             
+            // --- FAB LOGIC ---
             const renderFabOptions = () => {
                 fabOptions.innerHTML = '';
-                models.forEach(model => {
+                models.forEach((model, index) => {
                     const option = document.createElement('button');
                     option.className = 'fab-option';
                     option.textContent = model.name;
                     option.dataset.modelId = model.id;
-                    if (model.id === selectedModel) {
-                        option.classList.add('active');
-                    }
+                    option.style.transitionDelay = `${index * 50}ms`;
+                    if (model.id === selectedModel) option.classList.add('active');
+                    
                     option.addEventListener('click', () => {
                         selectedModel = model.id;
                         renderFabOptions();
@@ -171,15 +193,72 @@
                     fabOptions.appendChild(option);
                 });
             };
-
-            fab.addEventListener('click', () => {
+            fab.addEventListener('click', (e) => {
+                e.stopPropagation();
                 fabContainer.classList.toggle('active');
+            });
+            document.addEventListener('click', (e) => {
+                if (!fabContainer.contains(e.target)) {
+                    fabContainer.classList.remove('active');
+                }
             });
             renderFabOptions();
 
-            // --- CORE CHAT LOGIC ---
-            let messages = [];
+            // --- CHAT & HISTORY LOGIC ---
+            const saveChats = () => localStorage.setItem('ai_chats', JSON.stringify(allChats));
+            const loadChats = () => {
+                const chats = JSON.parse(localStorage.getItem('ai_chats') || '{}');
+                // Ensure chats have a timestamp for sorting
+                Object.keys(chats).forEach(id => {
+                    if (!chats[id].timestamp) {
+                        chats[id].timestamp = Date.now() - parseInt(id);
+                    }
+                });
+                return chats;
+            };
 
+            const renderHistory = () => {
+                historyList.innerHTML = '';
+                const sortedChatIds = Object.keys(allChats).sort((a, b) => allChats[b].timestamp - allChats[a].timestamp);
+                sortedChatIds.forEach(id => {
+                    const chat = allChats[id];
+                    if (chat.messages.length > 0) {
+                        const item = document.createElement('div');
+                        item.className = 'history-item';
+                        item.textContent = chat.messages[0].content.substring(0, 25);
+                        item.dataset.chatId = id;
+                        item.addEventListener('click', () => {
+                            loadChat(id);
+                            if (window.innerWidth < 768) sidebar.classList.remove('open');
+                        });
+                        historyList.appendChild(item);
+                    }
+                });
+            };
+            
+            const createNewChat = () => {
+                currentChatId = Date.now().toString();
+                allChats[currentChatId] = { messages: [], timestamp: Date.now() };
+                chatContainer.innerHTML = '';
+                welcomeMessage.style.display = 'block';
+                saveChats();
+                renderHistory();
+            };
+
+            newChatButton.addEventListener('click', createNewChat);
+
+            const loadChat = (id) => {
+                currentChatId = id;
+                chatContainer.innerHTML = '';
+                const chat = allChats[id];
+                if (chat && chat.messages.length > 0) {
+                    welcomeMessage.style.display = 'none';
+                    chat.messages.forEach(msg => addMessage(marked.parse(msg.content), msg.role));
+                } else {
+                    welcomeMessage.style.display = 'block';
+                }
+            };
+            
             const addMessage = (content, sender) => {
                 const wrapper = document.createElement('div');
                 wrapper.className = `message-wrapper ${sender}`;
@@ -189,12 +268,11 @@
                 wrapper.appendChild(bubble);
                 chatContainer.appendChild(wrapper);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
+                highlightCode(bubble);
                 return bubble;
             };
 
-            const highlightCode = (element) => {
-                element.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
-            };
+            const highlightCode = (element) => element.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
             
             chatInput.addEventListener('input', () => {
                 chatInput.style.height = 'auto';
@@ -212,26 +290,24 @@
                 e.preventDefault();
                 const userInput = chatInput.value.trim();
                 if (!userInput) return;
-
+                
                 if (welcomeMessage) welcomeMessage.style.display = 'none';
-
-                const userBubble = addMessage(marked.parse(userInput), 'user');
-                highlightCode(userBubble);
-                messages.push({ role: 'user', content: userInput });
+                
+                addMessage(marked.parse(userInput), 'user');
+                allChats[currentChatId].messages.push({ role: 'user', content: userInput });
                 
                 chatInput.value = '';
                 chatInput.style.height = 'auto';
                 submitButton.disabled = true;
 
-                const thinkingAnimation = '<div class="thinking-animation"><span></span><span></span><span></span></div>';
-                const thinkingMessage = addMessage(thinkingAnimation, 'assistant');
+                const thinkingMessage = addMessage('<div class="thinking-animation"><span></span><span></span><span></span></div>', 'assistant');
 
                 try {
                     const response = await fetch('/api/ai', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            messages: messages,
+                            messages: allChats[currentChatId].messages,
                             model: selectedModel,
                         }),
                     });
@@ -246,9 +322,13 @@
                     const data = await response.json();
                     const assistantResponse = data.response || '抱歉，我没有收到有效的回复。';
 
-                    const assistantBubble = addMessage(marked.parse(assistantResponse), 'assistant');
-                    highlightCode(assistantBubble);
-                    messages.push({ role: 'assistant', content: assistantResponse });
+                    addMessage(marked.parse(assistantResponse), 'assistant');
+                    allChats[currentChatId].messages.push({ role: 'assistant', content: assistantResponse });
+                    
+                    // Update timestamp to bring this chat to the top
+                    allChats[currentChatId].timestamp = Date.now();
+                    saveChats();
+                    renderHistory();
 
                 } catch (error) {
                     console.error('Fetch Error:', error);
@@ -258,6 +338,16 @@
                     chatInput.focus();
                 }
             });
+
+            // --- INITIALIZATION ---
+            allChats = loadChats();
+            const sortedChatIds = Object.keys(allChats).sort((a, b) => allChats[b].timestamp - allChats[a].timestamp);
+            if (sortedChatIds.length > 0) {
+                loadChat(sortedChatIds[0]);
+            } else {
+                createNewChat();
+            }
+            renderHistory();
         });
     </script>
 </body>
