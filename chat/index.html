@@ -9,7 +9,7 @@
     <link rel="icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACiSURBVDhPrZDRDcAgDAOz88xM6swM3YVAsAhg2D8pP22xJXaSKQ3/n+8A8Olx4gGczxWgE02aDgE8jWjnArwM0S4QkGgBF4bRBFCJFHfA0GgBF4Vpx3wAigJgSsxvQyCqgNCU2A0YE4wGjAswJ/xAGHLARJ2vEfgvQEC8c54wQBRp/gQk/l/AEBwBgn8L/wYxrt/tXQUB3gAAAABJRU5ErkJggg==">
     <style>
         :root { --sidebar-width: 16rem; --sidebar-width-icon: 3rem; }
-        body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; line-height: 1.5; -webkit-font-smoothing: antialiased; background-color: #ffffff; color: #1f2937; }
+        body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; line-height: 1.5; -webkit-font-smoothing: antialiased; background-color: #ffffff; color: #1f2937; margin: 0;}
         html.dark body { background-color: #111827; color: #d1d5db; }
         .scrollbar-thumb-border::-webkit-scrollbar { width: 8px; }
         .scrollbar-thumb-border::-webkit-scrollbar-thumb { background-color: #d1d5db; border-radius: 4px; }
@@ -21,7 +21,6 @@
         @media (min-width: 768px) { .group.peer { display: block; } }
         main { position: relative; display: flex; width: 100%; flex: 1 1 0%; flex-direction: column; background-color: #ffffff; }
         html.dark main { background-color: #1f2937; }
-        header { position: absolute; height: 4rem; display: flex; align-items: center; padding-left: 1rem; padding-right: 1rem; }
         .flex-col { flex-direction: column; } .items-center { align-items: center; } .justify-center { justify-content: center; } .h-full { height: 100%; } .w-full { width: 100%; }
         .space-y-4 > :not([hidden]) ~ :not([hidden]) { --tw-space-y-reverse: 0; margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse))); margin-bottom: calc(1rem * var(--tw-space-y-reverse)); }
         .px-4 { padding-left: 1rem; padding-right: 1rem; } .font-bold { font-weight: 700; } .text-2xl { font-size: 1.5rem; line-height: 2rem; } .mx-auto { margin-left: auto; margin-right: auto; }
@@ -41,7 +40,8 @@
         .p-2 { padding: 0.5rem; } .space-x-1 > :not([hidden]) ~ :not([hidden]) { margin-right: calc(0.25rem * var(--tw-space-x-reverse)); margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse))); }
         .rounded-b { border-bottom-right-radius: 0.375rem; border-bottom-left-radius: 0.375rem; }
         .dark\:bg-input\/30 { background-color: rgba(55, 65, 81, 0.3); }
-        button, select { font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; padding: 0; text-transform: none; background-color: transparent; background-image: none; cursor: pointer; -webkit-appearance: button; }
+        button, select { font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; padding: 0; text-transform: none; background-color: transparent; background-image: none; cursor: pointer; }
+        select {-webkit-appearance: none; -moz-appearance: none; appearance: none;}
         .h-9 { height: 2.25rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
         .inline-flex { display: inline-flex; } .size-4 { height: 1rem; width: 1rem; } .ml-auto { margin-left: auto; } .size-9 { height: 2.25rem; width: 2.25rem; }
         .bg-primary { background-color: #3b82f6; } html.dark .bg-primary { background-color: #60a5fa; }
@@ -68,7 +68,7 @@
         .markdown-body ul, .markdown-body ol { padding-left: 2rem; margin-bottom: 1rem; } .markdown-body li { margin-bottom: 0.25rem; }
         .markdown-body blockquote { border-left: 4px solid #d1d5db; padding-left: 1rem; margin-left: 0; font-style: italic; color: #6b7280; }
         html.dark .markdown-body blockquote { border-left-color: #4b5563; color: #9ca3af; }
-        .model-select { padding: 0.5rem; border-radius: 0.375rem; border: 1px solid #d1d5db; background-color: #ffffff; color: #1f2937; margin-right: 0.5rem; -webkit-appearance: none; -moz-appearance: none; appearance: none;}
+        .model-select { padding: 0.5rem; border-radius: 0.375rem; border: 1px solid #d1d5db; background-color: #ffffff; color: #1f2937; margin-right: 0.5rem; }
         html.dark .model-select { border-color: #4b5563; background-color: #374151; color: #d1d5db; }
     </style>
 </head>
@@ -91,6 +91,7 @@
                             class="min-h-16 w-full rounded-t rounded-b-none bg-transparent px-3 py-2 text-base border-0 shadow-none focus-visible:ring-0 resize-none max-h-[50vh] scrollbar placeholder:text-muted-foreground"
                             autofocus placeholder="Text here..."></textarea>
                         <div class="flex items-center p-2 space-x-1 dark:bg-input/30 rounded-b">
+                            <!-- 修正之处：移除了label上的id属性 -->
                             <label for="model-select" class="sr-only">Choose a model</label>
                             <select id="model-select" class="model-select">
                                 <option value="@cf/meta/llama-3-8b-instruct">Llama 3 8B</option>
@@ -141,7 +142,7 @@
                 const selectedModel = modelSelect.value;
                 if (!userInput) return;
 
-                if (welcomeMessage) {
+                if (welcomeMessage && welcomeMessage.style.display !== 'none') {
                     welcomeMessage.style.display = 'none';
                 }
                 
@@ -167,7 +168,8 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                     }
                     
                     const reader = response.body.getReader();
@@ -187,10 +189,16 @@
                                 const dataStr = line.substring(6);
                                 if (dataStr.trim() === '[DONE]') {
                                     messages.push({ role: 'assistant', content: assistantMessage });
-                                    return;
+                                    // Make sure to return here to stop processing after [DONE]
+                                    submitButton.disabled = false;
+                                    chatInput.focus();
+                                    return; 
                                 }
                                 try {
                                     const data = JSON.parse(dataStr);
+                                    if (data.error) {
+                                        throw new Error(data.error);
+                                    }
                                     if(data.response) {
                                         assistantMessage += data.response;
                                     }
@@ -202,11 +210,12 @@
                         messageContentDiv.innerHTML = marked.parse(assistantMessage);
                         chatContainer.scrollTop = chatContainer.scrollHeight;
                     }
+                    // This part should ideally not be reached if [DONE] is always sent.
                     messages.push({ role: 'assistant', content: assistantMessage });
 
                 } catch (error) {
-                    messageContentDiv.innerHTML = marked.parse('抱歉，出错了。请检查 Pages Functions 的绑定和代码。');
-                    console.error('Error:', error);
+                    messageContentDiv.innerHTML = marked.parse(`**抱歉，出错了。**\n\n请检查浏览器开发者工具 (F12) 的 Console 和 Network 选项卡以获取详细信息。\n\n**常见原因:**\n1.  AI 绑定未在 Cloudflare Pages 设置中正确配置。\n2.  选择的模型可能暂时不可用或您的账户有限制。\n3.  后端函数代码 (`ai.js`) 存在错误。`);
+                    console.error('Error during fetch:', error);
                 } finally {
                     submitButton.disabled = false;
                     chatInput.focus();
