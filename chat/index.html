@@ -102,7 +102,8 @@
                             <button id="submit-button"
                                 class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 size-9 ml-auto"
                                 type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <!-- 修正之处：viewBox="0 0 24 24" -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path>
                                 </svg>
                             </button>
@@ -131,6 +132,7 @@
             chatInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
+                    // dispatchEvent is more robust for triggering form submission
                     chatForm.dispatchEvent(new Event('submit', { cancelable: true }));
                 }
             });
@@ -138,9 +140,10 @@
             chatForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const userInput = chatInput.value.trim();
-                const selectedModel = modelSelect.value;
                 if (!userInput) return;
 
+                const selectedModel = modelSelect.value;
+                
                 if (welcomeMessage && welcomeMessage.style.display !== 'none') {
                     welcomeMessage.style.display = 'none';
                 }
@@ -167,7 +170,8 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                     }
                     
                     const reader = response.body.getReader();
@@ -177,6 +181,7 @@
 
                     while (true) {
                         const { done, value } = await reader.read();
+                        
                         if (done) {
                             messages.push({ role: 'assistant', content: assistantMessage });
                             break;
@@ -189,13 +194,15 @@
                             if (line.startsWith('data: ')) {
                                 const dataStr = line.substring(6);
                                 if (dataStr.trim() === '[DONE]') {
-                                    // This is one way to signal the end, but we also handle `done` from the reader.
-                                    break;
+                                    // Let the main loop handle the `done` condition
+                                    continue;
                                 }
                                 try {
                                     const data = JSON.parse(dataStr);
                                     if(data.response) {
                                         assistantMessage += data.response;
+                                    } else if (data.error) {
+                                        throw new Error(data.error);
                                     }
                                 } catch (error) {
                                      // Incomplete JSON object, wait for the next chunk
@@ -209,7 +216,8 @@
                     messageContentDiv.innerHTML = marked.parse(assistantMessage);
 
                 } catch (error) {
-                    messageContentDiv.innerHTML = marked.parse(`**抱歉，出错了。** 请检查浏览器开发者工具 (F12) 的 Console 选项卡获取详细信息。`);
+                    const errorMessage = `**抱歉，出错了。**\n\n请按 F12 打开浏览器开发者工具，查看 **Console (控制台)** 和 **Network (网络)** 选项卡以获取详细信息。\n\n**错误详情:**\n\`\`\`\n${error.message}\n\`\`\``;
+                    messageContentDiv.innerHTML = marked.parse(errorMessage);
                     console.error('Error during fetch:', error);
                 } finally {
                     submitButton.disabled = false;
