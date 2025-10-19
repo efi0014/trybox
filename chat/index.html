@@ -28,8 +28,25 @@
         }
         body { font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-color); display: flex; height: 100vh; overflow: hidden; }
         #app-wrapper { display: flex; width: 100%; height: 100%; }
-        #sidebar { width: var(--sidebar-width); background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; transition: margin-left 0.3s ease; flex-shrink: 0; }
-        #sidebar.collapsed { margin-left: calc(-1 * var(--sidebar-width)); }
+        
+        /* --- Sidebar Fix --- */
+        #sidebar { 
+            width: var(--sidebar-width); 
+            background-color: var(--sidebar-bg); 
+            border-right: 1px solid var(--sidebar-border); 
+            display: flex; 
+            flex-direction: column; 
+            transition: width 0.3s ease, padding 0.3s ease; 
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        #sidebar.collapsed { 
+            width: 0;
+            padding: 0;
+            border-right: none;
+        }
+        #sidebar-content { min-width: var(--sidebar-width); }
+        
         #sidebar-header { padding: 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--sidebar-border); }
         #new-chat-button { font-size: 0.9rem; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; cursor: pointer; color: var(--text-color); }
         #history-list { flex-grow: 1; overflow-y: auto; padding: 0.5rem; }
@@ -52,34 +69,42 @@
         .assistant .message-bubble { background-color: var(--assistant-bubble-bg); color: var(--assistant-bubble-text); border-bottom-left-radius: 0.5rem; }
         .markdown-body pre { background-color: var(--code-bg); color: #abb2bf; padding: 1rem; border-radius: 8px; overflow-x: auto; }
         .markdown-body code { font-family: 'Fira Code', 'Courier New', monospace; padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 6px; }
-        /* FAB Model Selector */
+        
+        /* --- FAB Model Selector Fix --- */
         #fab-container { position: absolute; top: 4.5rem; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; align-items: center; justify-content: center; }
         .fab { width: 48px; height: 48px; background-color: var(--fab-bg); color: white; border: none; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; flex-shrink: 0; z-index: 11; }
         html.dark .fab { color: #1e1f20; }
         .fab:hover { background-color: var(--fab-hover-bg); }
-        .fab-icon { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .fab-icon { transition: transform 0.3s ease, opacity 0.2s ease; position: absolute; }
         #fab-container.active .fab-icon { transform: rotate(45deg) scale(0); opacity: 0; }
-        .fab-options { display: flex; align-items: center; gap: 0.75rem; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; }
-        .fab-option { padding: 0.5rem 1rem; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 9999px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease; opacity: 0; transform: scale(0.8); white-space: nowrap; }
+        .fab-options { display: flex; align-items: center; gap: 0.75rem; transition: all 0.3s ease; }
+        .fab-option { padding: 0.5rem 1rem; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 9999px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease; opacity: 0; transform: scale(0.8); white-space: nowrap; pointer-events: none; }
         #fab-container.active .fab-options { pointer-events: auto; }
         #fab-container.active .fab-option { opacity: 1; transform: scale(1); }
         .fab-option:hover { transform: scale(1.1); }
         .fab-option.active { background-color: var(--fab-bg); color: white; }
         html.dark .fab-option.active { color: #1e1f20; }
+
         .thinking-animation { display: flex; align-items: center; gap: 4px; }
         .thinking-animation span { width: 8px; height: 8px; background-color: var(--assistant-bubble-text); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
         .thinking-animation span:nth-child(1) { animation-delay: -0.32s; } .thinking-animation span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
-        @media (max-width: 768px) { #sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 100; margin-left: calc(-1 * var(--sidebar-width)); } #sidebar.open { margin-left: 0; } }
+        
+        @media (max-width: 768px) { 
+            #sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 100; margin-left: calc(-1 * var(--sidebar-width)); transform: none;} 
+            #sidebar.open { margin-left: 0; } 
+        }
     </style>
 </head>
 <body>
     <div id="app-wrapper">
         <aside id="sidebar">
-            <div id="sidebar-header">
-                <button id="new-chat-button">新建对话</button>
+            <div id="sidebar-content">
+                <div id="sidebar-header">
+                    <button id="new-chat-button">新建对话</button>
+                </div>
+                <div id="history-list"></div>
             </div>
-            <div id="history-list"></div>
         </aside>
         <div id="app-container">
             <header id="app-header">
@@ -93,10 +118,10 @@
                 </button>
             </header>
             <div id="fab-container">
+                <div id="fab-options" class="fab-options"></div>
                 <button id="fab" class="fab" title="选择模型">
                     <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                 </button>
-                <div id="fab-options" class="fab-options"></div>
             </div>
             <div id="chat-container">
                 <div id="welcome-message" style="text-align: center; padding-top: 20vh;"><h1 style="font-size: 3rem; font-weight: 500;">Hello!</h1></div>
@@ -156,11 +181,12 @@
                 applyTheme(newTheme);
             });
             
+            // --- Sidebar Fix ---
             const toggleSidebar = () => {
-                const isOpen = sidebar.classList.toggle('open');
+                sidebar.classList.toggle('collapsed');
                 if (window.innerWidth < 768) {
                     let overlay = document.getElementById('sidebar-overlay');
-                    if (isOpen) {
+                    if (!sidebar.classList.contains('collapsed')) {
                         if (!overlay) {
                             overlay = document.createElement('div');
                             overlay.id = 'sidebar-overlay';
@@ -174,22 +200,11 @@
                 }
             };
             menuToggle.addEventListener('click', toggleSidebar);
-            if (window.innerWidth >= 768) {
-                sidebar.classList.add('open');
-                sidebar.classList.remove('collapsed');
-            } else {
+            if (window.innerWidth < 768) {
                 sidebar.classList.add('collapsed');
             }
-            window.addEventListener('resize', () => {
-                if(window.innerWidth >= 768) {
-                    sidebar.classList.add('open');
-                    sidebar.classList.remove('collapsed');
-                } else {
-                    sidebar.classList.remove('open');
-                    sidebar.classList.add('collapsed');
-                }
-            });
 
+            // --- FAB Fix ---
             const renderFabOptions = () => {
                 fabOptions.innerHTML = '';
                 models.forEach((model, index) => {
@@ -200,21 +215,19 @@
                     option.style.transitionDelay = `${index * 30}ms`;
                     if (model.id === selectedModel) option.classList.add('active');
                     
-                    option.addEventListener('click', () => {
+                    option.addEventListener('click', (e) => {
+                        e.stopPropagation();
                         selectedModel = model.id;
-                        renderFabOptions();
                         fabContainer.classList.remove('active');
+                        renderFabOptions();
                     });
-                    fabOptions.appendChild(option);
+                    fabOptions.insertBefore(option, fabOptions.firstChild);
                 });
             };
-
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
                 fabContainer.classList.toggle('active');
-                if (fabContainer.classList.contains('active')) {
-                    chatContainer.scrollTop -= 80;
-                }
+                if (fabContainer.classList.contains('active')) chatContainer.scrollTop -= 80;
             });
             document.addEventListener('click', (e) => {
                 if (!fabContainer.contains(e.target)) fabContainer.classList.remove('active');
