@@ -15,6 +15,7 @@
             --assistant-bubble-text: #3c4043; --button-bg: #e8f0fe; --button-hover-bg: #d2e3fc;
             --button-disabled-bg: #f1f3f4; --button-icon-color: #1967d2; --button-icon-disabled-color: #9aa0a6;
             --code-bg: #282c34; --header-icon-color: #5f6368;
+            --fab-bg: #1a73e8; --fab-hover-bg: #185abc;
         }
         html.dark {
             --bg-color: #131314; --text-color: #e8eaed; --chat-bg: #1e1f20; --input-bg: #1e1f20;
@@ -22,16 +23,16 @@
             --user-bubble-bg: #28354c; --user-bubble-text: #a8c7fa; --assistant-bubble-bg: #2d2e30;
             --assistant-bubble-text: #e8eaed; --button-bg: #28354c; --button-hover-bg: #3a4760;
             --button-disabled-bg: #3c4043; --button-icon-color: #a8c7fa; --button-icon-disabled-color: #7f8c8d;
-            --header-icon-color: #9aa0a6;
+            --header-icon-color: #9aa0a6; --fab-bg: #8ab4f8; --fab-hover-bg: #a0c2f8;
         }
         body { font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        #app-container { display: flex; flex-direction: column; height: 100%; width: 100%; max-width: 800px; margin: 0 auto; padding: 0 1rem; box-sizing: border-box; }
+        #app-container { position: relative; display: flex; flex-direction: column; height: 100%; width: 100%; max-width: 800px; margin: 0 auto; padding: 0 1rem; box-sizing: border-box; }
         #app-header { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; flex-shrink: 0; }
         #app-title { font-size: 1.25rem; font-weight: 500; }
         #theme-toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; border-radius: 50%; background-color: transparent; cursor: pointer; color: var(--header-icon-color); }
         #theme-toggle:hover { background-color: rgba(0,0,0,0.05); }
         html.dark #theme-toggle:hover { background-color: rgba(255,255,255,0.08); }
-        #chat-container { flex: 1; overflow-y: auto; padding-top: 1rem; scrollbar-width: thin; }
+        #chat-container { flex: 1; overflow-y: auto; padding-top: 5rem; /* Increased padding to make space for FAB */ scrollbar-width: thin; scroll-behavior: smooth;}
         #chat-container::-webkit-scrollbar { width: 6px; }
         #chat-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
         #form-container { padding: 1rem 0; position: relative; }
@@ -47,7 +48,7 @@
         .user { justify-content: flex-end; }
         .user .message-bubble { background-color: var(--user-bubble-bg); color: var(--user-bubble-text); border-bottom-right-radius: 0.5rem; }
         .assistant .message-bubble { background-color: var(--assistant-bubble-bg); color: var(--assistant-bubble-text); border-bottom-left-radius: 0.5rem; }
-        .markdown-body pre { background-color: var(--code-bg); color: #abb2bf; padding: 1rem; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', 'Courier New', monospace; }
+        .markdown-body pre { background-color: var(--code-bg); color: #abb2bf; padding: 1rem; border-radius: 8px; overflow-x: auto; }
         .markdown-body code { font-family: 'Fira Code', 'Courier New', monospace; background-color: var(--assistant-bubble-bg); padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 6px; }
         html.dark .markdown-body code { background-color: var(--bg-color); }
         .markdown-body pre > code { background: none; padding: 0; }
@@ -55,10 +56,23 @@
         .markdown-body p:last-child { margin-bottom: 0; }
         .markdown-body h1, .markdown-body h2, .markdown-body h3 { border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; margin-bottom: 1rem; }
         .markdown-body ul, .markdown-body ol { padding-left: 2em; }
-        .markdown-body a { color: #8ab4f8; text-decoration: none; }
-        .markdown-body a:hover { text-decoration: underline; }
-        #model-select-wrapper { position: absolute; bottom: calc(100% + 0.5rem); left: 50%; transform: translateX(-50%); padding: 0.25rem; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 9999px; box-shadow: var(--input-shadow); z-index: 10; }
-        #model-select { border: none; background-color: transparent; color: var(--text-color); padding: 0.25rem 0.5rem; font-size: 0.8rem; outline: none; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+        /* Floating Action Button (FAB) for models */
+        #fab-container { position: absolute; top: 4.5rem; left: 50%; transform: translateX(-50%); z-index: 10; text-align: center; }
+        .fab { width: 48px; height: 48px; background-color: var(--fab-bg); color: white; border: none; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        html.dark .fab { color: #1e1f20; }
+        .fab:hover { background-color: var(--fab-hover-bg); }
+        .fab-options { display: flex; flex-direction: column; align-items: center; gap: 1rem; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-1rem); opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .fab-container.active .fab-options { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .fab-option { width: 40px; height: 40px; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; font-size: 0.7rem; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .fab-option:hover { transform: scale(1.1); }
+        .fab-option.active { background-color: var(--fab-bg); color: white; }
+        html.dark .fab-option.active { color: #1e1f20; }
+        /* Thinking Animation */
+        .thinking-animation { display: flex; align-items: center; gap: 4px; }
+        .thinking-animation span { width: 8px; height: 8px; background-color: var(--assistant-bubble-text); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .thinking-animation span:nth-child(1) { animation-delay: -0.32s; }
+        .thinking-animation span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
     </style>
 </head>
 <body>
@@ -70,6 +84,14 @@
                 <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </button>
         </header>
+
+        <div id="fab-container">
+            <div id="fab-options" class="fab-options"></div>
+            <button id="fab" class="fab" title="选择模型">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"></path><path d="m12 14-4-4"></path></svg>
+            </button>
+        </div>
+
         <div id="chat-container">
             <div id="welcome-message" style="text-align: center; padding-top: 20vh;">
                 <h1 style="font-size: 3rem; font-weight: 500;">Hello, I'm your AI assistant</h1>
@@ -78,14 +100,6 @@
         </div>
 
         <div id="form-container">
-             <div id="model-select-wrapper">
-                <select id="model-select">
-                    <option value="@cf/meta/llama-3-8b-instruct">Llama 3 8B</option>
-                    <option value="@cf/meta/llama-3.1-8b-instruct">Llama 3.1 8B</option>
-                    <option value="@cf/mistral/mistral-7b-instruct-v0.1">Mistral 7B</option>
-                    <option value="@cf/google/gemma-7b-it">Gemma 7B</option>
-                </select>
-            </div>
             <form id="chat-form">
                 <textarea id="chat-input" placeholder="在此输入消息..." rows="1"></textarea>
                 <button id="submit-button" type="submit">
@@ -99,38 +113,71 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- THEME TOGGLE LOGIC ---
+            // --- MODELS ---
+            const models = [
+                { id: '@cf/meta/llama-3-8b-instruct', name: 'L3' },
+                { id: '@cf/meta/llama-3.1-8b-instruct', name: 'L3.1' },
+                { id: '@cf/mistral/mistral-7b-instruct-v0.1', name: 'M7B' },
+                { id: '@cf/google/gemma-7b-it', name: 'G7B' },
+            ];
+            let selectedModel = models[0].id;
+
+            // --- THEME TOGGLE ---
             const themeToggle = document.getElementById('theme-toggle');
             const sunIcon = document.getElementById('theme-icon-sun');
             const moonIcon = document.getElementById('theme-icon-moon');
             const docElement = document.documentElement;
-
-            const updateThemeIcon = (isDark) => {
-                sunIcon.style.display = isDark ? 'none' : 'block';
-                moonIcon.style.display = isDark ? 'block' : 'none';
-            };
             const applyTheme = (theme) => {
                 const isDark = theme === 'dark';
                 docElement.classList.toggle('dark', isDark);
-                updateThemeIcon(isDark);
+                sunIcon.style.display = isDark ? 'none' : 'block';
+                moonIcon.style.display = isDark ? 'block' : 'none';
             };
             const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             applyTheme(savedTheme);
-
             themeToggle.addEventListener('click', () => {
                 const newTheme = docElement.classList.contains('dark') ? 'light' : 'dark';
                 localStorage.setItem('theme', newTheme);
                 applyTheme(newTheme);
             });
 
-            // --- CHAT LOGIC ---
+            // --- CHAT ELEMENTS ---
             const chatContainer = document.getElementById('chat-container');
             const chatForm = document.getElementById('chat-form');
             const chatInput = document.getElementById('chat-input');
-            const modelSelect = document.getElementById('model-select');
             const submitButton = document.getElementById('submit-button');
             const welcomeMessage = document.getElementById('welcome-message');
 
+            // --- FAB MODEL SELECTOR ---
+            const fabContainer = document.getElementById('fab-container');
+            const fab = document.getElementById('fab');
+            const fabOptions = document.getElementById('fab-options');
+            
+            const renderFabOptions = () => {
+                fabOptions.innerHTML = '';
+                models.forEach(model => {
+                    const option = document.createElement('button');
+                    option.className = 'fab-option';
+                    option.textContent = model.name;
+                    option.dataset.modelId = model.id;
+                    if (model.id === selectedModel) {
+                        option.classList.add('active');
+                    }
+                    option.addEventListener('click', () => {
+                        selectedModel = model.id;
+                        renderFabOptions();
+                        fabContainer.classList.remove('active');
+                    });
+                    fabOptions.appendChild(option);
+                });
+            };
+
+            fab.addEventListener('click', () => {
+                fabContainer.classList.toggle('active');
+            });
+            renderFabOptions();
+
+            // --- CORE CHAT LOGIC ---
             let messages = [];
 
             const addMessage = (content, sender) => {
@@ -138,7 +185,7 @@
                 wrapper.className = `message-wrapper ${sender}`;
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble markdown-body';
-                bubble.innerHTML = marked.parse(content);
+                bubble.innerHTML = content;
                 wrapper.appendChild(bubble);
                 chatContainer.appendChild(wrapper);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -146,9 +193,7 @@
             };
 
             const highlightCode = (element) => {
-                element.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
+                element.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
             };
             
             chatInput.addEventListener('input', () => {
@@ -168,11 +213,9 @@
                 const userInput = chatInput.value.trim();
                 if (!userInput) return;
 
-                if (welcomeMessage) {
-                    welcomeMessage.style.display = 'none';
-                }
+                if (welcomeMessage) welcomeMessage.style.display = 'none';
 
-                const userBubble = addMessage(userInput, 'user');
+                const userBubble = addMessage(marked.parse(userInput), 'user');
                 highlightCode(userBubble);
                 messages.push({ role: 'user', content: userInput });
                 
@@ -180,69 +223,36 @@
                 chatInput.style.height = 'auto';
                 submitButton.disabled = true;
 
-                const assistantBubble = addMessage('<span class="thinking">思考中...</span>', 'assistant');
-                
+                const thinkingAnimation = '<div class="thinking-animation"><span></span><span></span><span></span></div>';
+                const thinkingMessage = addMessage(thinkingAnimation, 'assistant');
+
                 try {
                     const response = await fetch('/api/ai', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             messages: messages,
-                            model: modelSelect.value,
+                            model: selectedModel,
                         }),
                     });
 
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-                    }
-                    
-                    const reader = response.body.getReader();
-                    const decoder = new TextDecoder();
-                    let assistantMessage = '';
-                    let buffer = '';
+                    thinkingMessage.remove();
 
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-                        
-                        buffer += decoder.decode(value, { stream: true });
-                        
-                        const parts = buffer.split('\n\n');
-                        buffer = parts.pop(); // Keep the last, possibly incomplete, part in the buffer
-                        
-                        for (const part of parts) {
-                            if (part.startsWith('data: ')) {
-                                const dataStr = part.substring(6);
-                                if (dataStr.trim() === '[DONE]') {
-                                    break;
-                                }
-                                try {
-                                    const data = JSON.parse(dataStr);
-                                    if (data.response) {
-                                        assistantMessage += data.response;
-                                    } else if (data.error) {
-                                        throw new Error(data.error);
-                                    }
-                                } catch (error) {
-                                    console.warn("Could not parse JSON chunk:", dataStr);
-                                }
-                            }
-                        }
-                        
-                        assistantBubble.innerHTML = marked.parse(assistantMessage + '▋'); // Typing cursor
-                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
                     }
                     
-                    // Final render without cursor and with code highlighting
-                    assistantBubble.innerHTML = marked.parse(assistantMessage);
+                    const data = await response.json();
+                    const assistantResponse = data.response || '抱歉，我没有收到有效的回复。';
+
+                    const assistantBubble = addMessage(marked.parse(assistantResponse), 'assistant');
                     highlightCode(assistantBubble);
-                    
-                    messages.push({ role: 'assistant', content: assistantMessage });
+                    messages.push({ role: 'assistant', content: assistantResponse });
 
                 } catch (error) {
                     console.error('Fetch Error:', error);
-                    assistantBubble.innerHTML = marked.parse(`**错误:** ${error.message}`);
+                    addMessage(marked.parse(`**错误:** ${error.message}`), 'assistant');
                 } finally {
                     submitButton.disabled = false;
                     chatInput.focus();
