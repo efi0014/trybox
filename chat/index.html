@@ -43,7 +43,7 @@
         button, select { font-family: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; padding: 0; text-transform: none; background-color: transparent; background-image: none; cursor: pointer; }
         select {-webkit-appearance: none; -moz-appearance: none; appearance: none;}
         .h-9 { height: 2.25rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; } .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-        .inline-flex { display: inline-flex; } .size-4 { height: 1rem; width: 1rem; } .ml-auto { margin-left: auto; } .size-9 { height: 2.25rem; width: 2.25rem; }
+        .inline-flex { display: inline-flex; } .items-center { align-items: center; } .size-4 { height: 1rem; width: 1rem; } .ml-auto { margin-left: auto; } .size-9 { height: 2.25rem; width: 2.25rem; }
         .bg-primary { background-color: #3b82f6; } html.dark .bg-primary { background-color: #60a5fa; }
         .text-primary-foreground { color: #ffffff; } html.dark .text-primary-foreground { color: #1f2937; }
         .shadow-xs { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
@@ -91,7 +91,6 @@
                             class="min-h-16 w-full rounded-t rounded-b-none bg-transparent px-3 py-2 text-base border-0 shadow-none focus-visible:ring-0 resize-none max-h-[50vh] scrollbar placeholder:text-muted-foreground"
                             autofocus placeholder="Text here..."></textarea>
                         <div class="flex items-center p-2 space-x-1 dark:bg-input/30 rounded-b">
-                            <!-- 修正之处：移除了label上的id属性 -->
                             <label for="model-select" class="sr-only">Choose a model</label>
                             <select id="model-select" class="model-select">
                                 <option value="@cf/meta/llama-3-8b-instruct">Llama 3 8B</option>
@@ -103,7 +102,7 @@
                             <button id="submit-button"
                                 class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 size-9 ml-auto"
                                 type="submit">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path>
                                 </svg>
                             </button>
@@ -132,7 +131,7 @@
             chatInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    chatForm.requestSubmit();
+                    chatForm.dispatchEvent(new Event('submit', { cancelable: true }));
                 }
             });
 
@@ -168,18 +167,20 @@
                     });
 
                     if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     
                     const reader = response.body.getReader();
                     const decoder = new TextDecoder();
                     let assistantMessage = '';
-                    messageContentDiv.textContent = '';
+                    messageContentDiv.textContent = ''; // Clear "Thinking..."
 
                     while (true) {
                         const { done, value } = await reader.read();
-                        if (done) break;
+                        if (done) {
+                            messages.push({ role: 'assistant', content: assistantMessage });
+                            break;
+                        }
                         
                         const chunk = decoder.decode(value, { stream: true });
                         const lines = chunk.split('\n\n');
@@ -188,17 +189,11 @@
                             if (line.startsWith('data: ')) {
                                 const dataStr = line.substring(6);
                                 if (dataStr.trim() === '[DONE]') {
-                                    messages.push({ role: 'assistant', content: assistantMessage });
-                                    // Make sure to return here to stop processing after [DONE]
-                                    submitButton.disabled = false;
-                                    chatInput.focus();
-                                    return; 
+                                    // This is one way to signal the end, but we also handle `done` from the reader.
+                                    break;
                                 }
                                 try {
                                     const data = JSON.parse(dataStr);
-                                    if (data.error) {
-                                        throw new Error(data.error);
-                                    }
                                     if(data.response) {
                                         assistantMessage += data.response;
                                     }
@@ -207,14 +202,14 @@
                                 }
                             }
                         }
-                        messageContentDiv.innerHTML = marked.parse(assistantMessage);
+                        messageContentDiv.innerHTML = marked.parse(assistantMessage + '▋'); // Add a cursor effect
                         chatContainer.scrollTop = chatContainer.scrollHeight;
                     }
-                    // This part should ideally not be reached if [DONE] is always sent.
-                    messages.push({ role: 'assistant', content: assistantMessage });
+                    // Final render without the cursor
+                    messageContentDiv.innerHTML = marked.parse(assistantMessage);
 
                 } catch (error) {
-                    messageContentDiv.innerHTML = marked.parse(`**抱歉，出错了。**\n\n请检查浏览器开发者工具 (F12) 的 Console 和 Network 选项卡以获取详细信息。\n\n**常见原因:**\n1.  AI 绑定未在 Cloudflare Pages 设置中正确配置。\n2.  选择的模型可能暂时不可用或您的账户有限制。\n3.  后端函数代码 (`ai.js`) 存在错误。`);
+                    messageContentDiv.innerHTML = marked.parse(`**抱歉，出错了。** 请检查浏览器开发者工具 (F12) 的 Console 选项卡获取详细信息。`);
                     console.error('Error during fetch:', error);
                 } finally {
                     submitButton.disabled = false;
