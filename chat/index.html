@@ -21,36 +21,26 @@
             --bg-color: #131314; --text-color: #e8eaed; --input-bg: #1e1f20;
             --input-shadow: 0 1px 6px rgba(0, 0, 0, 0.2); --border-color: #3c4043;
             --user-bubble-bg: #28354c; --user-bubble-text: #a8c7fa; --assistant-bubble-bg: #2d2e30;
-            --assistant-bubble-text: #e8eaed; --button-bg: #28354c; --button-hover-bg: #3a4760;
-            --button-disabled-bg: #3c4043; --button-icon-color: #a8c7fa; --button-icon-disabled-color: #7f8c8d;
+            --assistant-bubble-text: #e8eaed; 
+            /* --- Button Color Fix --- */
+            --button-bg: #8ab4f8; 
+            --button-hover-bg: #a0c2f8;
+            --button-disabled-bg: #3c4043; 
+            --button-icon-color: #202124; 
+            --button-icon-disabled-color: #7f8c8d;
             --header-icon-color: #9aa0a6; --fab-bg: #8ab4f8; --fab-hover-bg: #a0c2f8;
             --sidebar-bg: #1e1f20; --sidebar-border: #3c4043;
         }
         body { font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-color); display: flex; height: 100vh; overflow: hidden; }
         #app-wrapper { display: flex; width: 100%; height: 100%; }
         
-        /* --- Sidebar Final Fix --- */
         #sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--sidebar-border);
-            display: flex;
-            flex-direction: column;
-            transition: width 0.3s ease;
-            flex-shrink: 0;
-            overflow-x: hidden; /* Prevent content from showing during collapse */
+            width: var(--sidebar-width); background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; 
+            transition: width 0.3s ease; flex-shrink: 0; overflow: hidden;
         }
-        #sidebar.collapsed {
-            width: 0;
-            border-right: none;
-        }
-        #sidebar-content {
-            min-width: var(--sidebar-width); /* Ensure content doesn't wrap during animation */
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
+        #sidebar.collapsed { width: 0; border-right: none; }
+        #sidebar-content { min-width: var(--sidebar-width); height: 100%; display: flex; flex-direction: column; }
+        
         #sidebar-header { padding: 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--sidebar-border); }
         #new-chat-button { font-size: 0.9rem; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; cursor: pointer; color: var(--text-color); }
         #history-list { flex-grow: 1; overflow-y: auto; padding: 0.5rem; }
@@ -65,8 +55,15 @@
         #chat-container::-webkit-scrollbar { width: 6px; } #chat-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
         #form-container { padding: 1rem; }
         #chat-form { position: relative; display: flex; align-items: flex-end; background-color: var(--input-bg); border-radius: 28px; box-shadow: var(--input-shadow); padding: 0.5rem; max-width: 800px; margin: 0 auto; }
-        #chat-input { width: 100%; border: none; outline: none; padding: 0.75rem 1rem; font-size: 1rem; line-height: 1.5; background-color: transparent; color: var(--text-color); resize: none; max-height: 200px; overflow-y: auto; }
+        /* --- Textarea multiline fix --- */
+        #chat-input { 
+            width: 100%; border: none; outline: none; padding: 0.75rem 1rem; font-size: 1rem; line-height: 1.5; background-color: transparent; 
+            color: var(--text-color); resize: none; max-height: 200px; overflow-y: auto; box-sizing: border-box; /* Crucial fix */
+        }
         #submit-button { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: none; border-radius: 50%; background-color: var(--button-bg); cursor: pointer; transition: background-color 0.2s ease; flex-shrink: 0; }
+        #submit-button svg { color: var(--button-icon-color); } #submit-button:hover { background-color: var(--button-hover-bg); }
+        #submit-button:disabled { background-color: var(--button-disabled-bg); cursor: not-allowed; }
+        #submit-button:disabled svg { color: var(--button-icon-disabled-color); }
         .message-wrapper { display: flex; margin-bottom: 1.5rem; max-width: 800px; margin-left: auto; margin-right: auto; }
         .message-bubble { padding: 1rem 1.25rem; border-radius: 1.5rem; max-width: 90%; word-wrap: break-word; line-height: 1.6; font-size: 1rem; }
         .user { justify-content: flex-end; } .user .message-bubble { background-color: var(--user-bubble-bg); color: var(--user-bubble-text); border-bottom-right-radius: 0.5rem; }
@@ -74,12 +71,11 @@
         .markdown-body pre { background-color: var(--code-bg); color: #abb2bf; padding: 1rem; border-radius: 8px; overflow-x: auto; }
         .markdown-body code { font-family: 'Fira Code', 'Courier New', monospace; padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 6px; }
         
-        /* --- FAB Final Fix --- */
         #fab-container { position: absolute; top: 4.5rem; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; align-items: center; justify-content: center; height: 48px; }
         .fab { width: 48px; height: 48px; background-color: var(--fab-bg); color: white; border: none; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; flex-shrink: 0; z-index: 11; }
         html.dark .fab { color: #1e1f20; }
         .fab:hover { background-color: var(--fab-hover-bg); }
-        .fab-icon { transition: transform 0.3s ease, opacity 0.3s ease; }
+        .fab-icon { transition: transform 0.3s ease, opacity 0.2s ease; position: absolute; }
         #fab-container.active .fab { transform: scale(0); opacity: 0; pointer-events: none; }
         .fab-options { display: flex; align-items: center; gap: 0.75rem; position: absolute; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; }
         #fab-container.active .fab-options { pointer-events: auto; opacity: 1; }
@@ -95,8 +91,8 @@
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
         
         @media (max-width: 768px) { 
-            #sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 100; width: var(--sidebar-width); } 
-            #sidebar.collapsed { width: 0; }
+            #sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 100; } 
+            #sidebar.collapsed { margin-left: calc(-1 * var(--sidebar-width)); }
         }
     </style>
 </head>
@@ -185,13 +181,11 @@
                 applyTheme(newTheme);
             });
             
-            // --- Sidebar Final Fix ---
             const toggleSidebar = () => {
                 const isCollapsed = sidebar.classList.toggle('collapsed');
-                // On mobile, create/remove an overlay
                 if (window.innerWidth < 768) {
                     let overlay = document.getElementById('sidebar-overlay');
-                    if (!isCollapsed) { // If sidebar is opening
+                    if (!isCollapsed) {
                         if (!overlay) {
                             overlay = document.createElement('div');
                             overlay.id = 'sidebar-overlay';
@@ -199,7 +193,7 @@
                             appWrapper.appendChild(overlay);
                             overlay.onclick = toggleSidebar;
                         }
-                    } else { // If sidebar is closing
+                    } else {
                         overlay?.remove();
                     }
                 }
@@ -207,7 +201,6 @@
             menuToggle.addEventListener('click', toggleSidebar);
             if (window.innerWidth < 768) sidebar.classList.add('collapsed');
 
-            // --- FAB Final Fix ---
             const renderFabOptions = () => {
                 fabOptions.innerHTML = '';
                 models.forEach((model, index) => {
@@ -227,6 +220,7 @@
                     fabOptions.appendChild(option);
                 });
             };
+
             fab.addEventListener('click', (e) => {
                 e.stopPropagation();
                 fabContainer.classList.toggle('active');
