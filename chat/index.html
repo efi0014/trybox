@@ -9,16 +9,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <style>
         :root {
-            --bg-color: #f0f2f5; --text-color: #1f1f1f; --chat-bg: #ffffff; --input-bg: #ffffff;
+            --bg-color: #f0f2f5; --text-color: #1f1f1f; --input-bg: #ffffff;
             --input-shadow: 0 1px 6px rgba(0, 0, 0, 0.06); --border-color: #e0e0e0;
             --user-bubble-bg: #e8f0fe; --user-bubble-text: #1967d2; --assistant-bubble-bg: #f8f9fa;
             --assistant-bubble-text: #3c4043; --button-bg: #e8f0fe; --button-hover-bg: #d2e3fc;
             --button-disabled-bg: #f1f3f4; --button-icon-color: #1967d2; --button-icon-disabled-color: #9aa0a6;
             --code-bg: #282c34; --header-icon-color: #5f6368; --fab-bg: #1a73e8; --fab-hover-bg: #185abc;
-            --sidebar-bg: #ffffff; --sidebar-border: #e0e0e0;
+            --sidebar-bg: #ffffff; --sidebar-border: #e0e0e0; --sidebar-width: 260px;
         }
         html.dark {
-            --bg-color: #131314; --text-color: #e8eaed; --chat-bg: #1e1f20; --input-bg: #1e1f20;
+            --bg-color: #131314; --text-color: #e8eaed; --input-bg: #1e1f20;
             --input-shadow: 0 1px 6px rgba(0, 0, 0, 0.2); --border-color: #3c4043;
             --user-bubble-bg: #28354c; --user-bubble-text: #a8c7fa; --assistant-bubble-bg: #2d2e30;
             --assistant-bubble-text: #e8eaed; --button-bg: #28354c; --button-hover-bg: #3a4760;
@@ -28,8 +28,8 @@
         }
         body { font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-color); display: flex; height: 100vh; overflow: hidden; }
         #app-wrapper { display: flex; width: 100%; height: 100%; }
-        #sidebar { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; transition: transform 0.3s ease; transform: translateX(-100%); flex-shrink: 0; }
-        #sidebar.open { transform: translateX(0); }
+        #sidebar { width: var(--sidebar-width); background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; transition: margin-left 0.3s ease; flex-shrink: 0; }
+        #sidebar.collapsed { margin-left: calc(-1 * var(--sidebar-width)); }
         #sidebar-header { padding: 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--sidebar-border); }
         #new-chat-button { font-size: 0.9rem; padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; cursor: pointer; color: var(--text-color); }
         #history-list { flex-grow: 1; overflow-y: auto; padding: 0.5rem; }
@@ -40,36 +40,29 @@
         #menu-toggle, #theme-toggle { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; border-radius: 50%; background-color: transparent; cursor: pointer; color: var(--header-icon-color); }
         #menu-toggle:hover, #theme-toggle:hover { background-color: rgba(0,0,0,0.05); }
         html.dark #menu-toggle:hover, html.dark #theme-toggle:hover { background-color: rgba(255,255,255,0.08); }
-        #chat-container { flex: 1; overflow-y: auto; padding: 4rem 1rem 1rem 1rem; scroll-behavior: smooth; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 4rem 1rem 1rem 1rem; scroll-behavior: smooth;}
         #chat-container::-webkit-scrollbar { width: 6px; } #chat-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
         #form-container { padding: 1rem; }
         #chat-form { position: relative; display: flex; align-items: flex-end; background-color: var(--input-bg); border-radius: 28px; box-shadow: var(--input-shadow); padding: 0.5rem; max-width: 800px; margin: 0 auto; }
         #chat-input { width: 100%; border: none; outline: none; padding: 0.75rem 1rem; font-size: 1rem; line-height: 1.5; background-color: transparent; color: var(--text-color); resize: none; max-height: 200px; overflow-y: auto; }
         #submit-button { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: none; border-radius: 50%; background-color: var(--button-bg); cursor: pointer; transition: background-color 0.2s ease; flex-shrink: 0; }
-        #submit-button svg { color: var(--button-icon-color); } #submit-button:hover { background-color: var(--button-hover-bg); }
-        #submit-button:disabled { background-color: var(--button-disabled-bg); cursor: not-allowed; }
-        #submit-button:disabled svg { color: var(--button-icon-disabled-color); }
         .message-wrapper { display: flex; margin-bottom: 1.5rem; max-width: 800px; margin-left: auto; margin-right: auto; }
         .message-bubble { padding: 1rem 1.25rem; border-radius: 1.5rem; max-width: 90%; word-wrap: break-word; line-height: 1.6; font-size: 1rem; }
-        .user { justify-content: flex-end; }
-        .user .message-bubble { background-color: var(--user-bubble-bg); color: var(--user-bubble-text); border-bottom-right-radius: 0.5rem; }
+        .user { justify-content: flex-end; } .user .message-bubble { background-color: var(--user-bubble-bg); color: var(--user-bubble-text); border-bottom-right-radius: 0.5rem; }
         .assistant .message-bubble { background-color: var(--assistant-bubble-bg); color: var(--assistant-bubble-text); border-bottom-left-radius: 0.5rem; }
         .markdown-body pre { background-color: var(--code-bg); color: #abb2bf; padding: 1rem; border-radius: 8px; overflow-x: auto; }
-        .markdown-body code { font-family: 'Fira Code', 'Courier New', monospace; background-color: var(--assistant-bubble-bg); padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 6px; }
-        html.dark .markdown-body code { background-color: var(--bg-color); }
-        .markdown-body p { margin: 0 0 1rem 0; } .markdown-body p:last-child { margin-bottom: 0; }
+        .markdown-body code { font-family: 'Fira Code', 'Courier New', monospace; padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 6px; }
         /* FAB Model Selector */
         #fab-container { position: absolute; top: 4.5rem; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; align-items: center; justify-content: center; }
-        .fab { width: 48px; height: 48px; background-color: var(--fab-bg); color: white; border: none; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; flex-shrink: 0; z-index: 11; }
+        .fab { width: 48px; height: 48px; background-color: var(--fab-bg); color: white; border: none; border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; flex-shrink: 0; z-index: 11; }
         html.dark .fab { color: #1e1f20; }
         .fab:hover { background-color: var(--fab-hover-bg); }
-        #fab-container.active .fab { transform: rotate(45deg); }
-        .fab-options { display: flex; align-items: center; transition: all 0.3s ease; pointer-events: none; }
-        .fab-option { padding: 0.5rem 1rem; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 9999px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; opacity: 0; transform: scale(0.8); white-space: nowrap; }
+        .fab-icon { transition: transform 0.3s ease, opacity 0.3s ease; }
+        #fab-container.active .fab-icon { transform: rotate(45deg) scale(0); opacity: 0; }
+        .fab-options { display: flex; align-items: center; gap: 0.75rem; position: absolute; left: 50%; transform: translateX(-50%); pointer-events: none; }
+        .fab-option { padding: 0.5rem 1rem; background-color: var(--input-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 9999px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; font-size: 0.9rem; transition: all 0.3s ease; opacity: 0; transform: scale(0.8); white-space: nowrap; }
         #fab-container.active .fab-options { pointer-events: auto; }
         #fab-container.active .fab-option { opacity: 1; transform: scale(1); }
-        .fab-options { gap: 0.75rem; transform: translateX(0); }
-        #fab-container.active .fab-options { transform: translateX(calc(50% + 24px + 0.5rem)); } /* (50% of fab + gap) */
         .fab-option:hover { transform: scale(1.1); }
         .fab-option.active { background-color: var(--fab-bg); color: white; }
         html.dark .fab-option.active { color: #1e1f20; }
@@ -77,7 +70,7 @@
         .thinking-animation span { width: 8px; height: 8px; background-color: var(--assistant-bubble-text); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
         .thinking-animation span:nth-child(1) { animation-delay: -0.32s; } .thinking-animation span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
-        @media (max-width: 768px) { #sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 100; } }
+        @media (max-width: 768px) { #sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 100; margin-left: calc(-1 * var(--sidebar-width)); } #sidebar.open { margin-left: 0; } }
     </style>
 </head>
 <body>
@@ -88,7 +81,6 @@
             </div>
             <div id="history-list"></div>
         </aside>
-
         <div id="app-container">
             <header id="app-header">
                 <button id="menu-toggle" title="Toggle History">
@@ -100,27 +92,20 @@
                     <svg id="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
             </header>
-
             <div id="fab-container">
-                <div id="fab-options" class="fab-options"></div>
                 <button id="fab" class="fab" title="选择模型">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="plus-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <svg class="fab-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                 </button>
+                <div id="fab-options" class="fab-options"></div>
             </div>
-
             <div id="chat-container">
-                <div id="welcome-message" style="text-align: center; padding-top: 20vh;">
-                    <h1 style="font-size: 3rem; font-weight: 500;">Hello!</h1>
-                </div>
+                <div id="welcome-message" style="text-align: center; padding-top: 20vh;"><h1 style="font-size: 3rem; font-weight: 500;">Hello!</h1></div>
             </div>
-
             <div id="form-container">
                 <form id="chat-form">
                     <textarea id="chat-input" placeholder="在此输入消息..." rows="1"></textarea>
                     <button id="submit-button" type="submit">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
                     </button>
                 </form>
             </div>
@@ -129,7 +114,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- MODELS ---
             const models = [
                 { id: '@cf/meta/llama-3-8b-instruct', name: 'Llama 3' },
                 { id: '@cf/meta/llama-3.1-8b-instruct', name: 'Llama 3.1' },
@@ -140,7 +124,6 @@
             let currentChatId = null;
             let allChats = {};
 
-            // --- DOM ELEMENTS ---
             const docElement = document.documentElement;
             const themeToggle = document.getElementById('theme-toggle');
             const sunIcon = document.getElementById('theme-icon-sun');
@@ -159,7 +142,6 @@
             const fabOptions = document.getElementById('fab-options');
             const appWrapper = document.getElementById('app-wrapper');
 
-            // --- THEME LOGIC ---
             const applyTheme = (theme) => {
                 const isDark = theme === 'dark';
                 docElement.classList.toggle('dark', isDark);
@@ -173,29 +155,41 @@
                 localStorage.setItem('theme', newTheme);
                 applyTheme(newTheme);
             });
-
-            // --- SIDEBAR LOGIC ---
+            
             const toggleSidebar = () => {
                 const isOpen = sidebar.classList.toggle('open');
-                if (window.innerWidth < 768) { // On mobile, add an overlay
+                if (window.innerWidth < 768) {
+                    let overlay = document.getElementById('sidebar-overlay');
                     if (isOpen) {
-                        const overlay = document.createElement('div');
-                        overlay.id = 'sidebar-overlay';
-                        overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99;';
-                        overlay.onclick = toggleSidebar;
-                        appWrapper.appendChild(overlay);
+                        if (!overlay) {
+                            overlay = document.createElement('div');
+                            overlay.id = 'sidebar-overlay';
+                            overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99;';
+                            appWrapper.appendChild(overlay);
+                            overlay.onclick = toggleSidebar;
+                        }
                     } else {
-                        document.getElementById('sidebar-overlay')?.remove();
+                        overlay?.remove();
                     }
                 }
             };
             menuToggle.addEventListener('click', toggleSidebar);
-            // Initially open sidebar on desktop
             if (window.innerWidth >= 768) {
                 sidebar.classList.add('open');
+                sidebar.classList.remove('collapsed');
+            } else {
+                sidebar.classList.add('collapsed');
             }
+            window.addEventListener('resize', () => {
+                if(window.innerWidth >= 768) {
+                    sidebar.classList.add('open');
+                    sidebar.classList.remove('collapsed');
+                } else {
+                    sidebar.classList.remove('open');
+                    sidebar.classList.add('collapsed');
+                }
+            });
 
-            // --- FAB LOGIC ---
             const renderFabOptions = () => {
                 fabOptions.innerHTML = '';
                 models.forEach((model, index) => {
@@ -219,19 +213,14 @@
                 e.stopPropagation();
                 fabContainer.classList.toggle('active');
                 if (fabContainer.classList.contains('active')) {
-                    // Scroll up to make space for options
                     chatContainer.scrollTop -= 80;
                 }
             });
-
             document.addEventListener('click', (e) => {
-                if (!fabContainer.contains(e.target)) {
-                    fabContainer.classList.remove('active');
-                }
+                if (!fabContainer.contains(e.target)) fabContainer.classList.remove('active');
             });
             renderFabOptions();
 
-            // --- CHAT & HISTORY LOGIC ---
             const saveChats = () => localStorage.setItem('ai_chats', JSON.stringify(allChats));
             const loadChats = () => JSON.parse(localStorage.getItem('ai_chats') || '{}');
 
@@ -263,7 +252,6 @@
                 saveChats();
                 renderHistory();
             };
-
             newChatButton.addEventListener('click', createNewChat);
 
             const loadChat = (id) => {
@@ -276,7 +264,7 @@
                 } else {
                     if (welcomeMessage) welcomeMessage.style.display = 'block';
                 }
-                renderHistory(); // Re-render to update active state
+                renderHistory();
             };
             
             const addMessage = (content, sender) => {
