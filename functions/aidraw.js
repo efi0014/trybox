@@ -95,9 +95,11 @@ const htmlContent = `
         <h1>AI绘画</h1>
         <img id="aiImage" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAADEUlEQVR4nO3BgQAAAADDoPlTX+EAVQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMBvArQAAVkUTe8AAAAASUVORK5CYII=" alt="AI生成的图片">
         <select id="model">
-            <option value="dreamshaper-8-lcm">DreamShaper 8 LCM(容易出黑图)</option>
-            <option value="stable-diffusion-xl-base-1.0" selected>Stable Diffusion XL Base 1.0(效果好，速度较慢)</option>
-            <option value="stable-diffusion-xl-lightning">Stable Diffusion XL Lightning(效果一般，速度较快)</option>
+            <option value="dreamshaper-8-lcm"></option>
+            <option value="stable-diffusion-xl-base-1.0" selected></option>
+            <option value="stable-diffusion-xl-lightning"></option>
+            <option value="stable-diffusion-v1-5-inpainting"></option>
+            <option value="phoenix-1.0"></option>
         </select>
         <input type="text" id="prompt" placeholder="请输入描述词...">
         <button type="button" class="random-btn" id="randomButton">随机提示词</button>
@@ -134,7 +136,7 @@ export async function onRequest(context) {
         case 'stable-diffusion-xl-base-1.0': model = '@cf/stabilityai/stable-diffusion-xl-base-1.0'; break;
         case 'stable-diffusion-xl-lightning': model = '@cf/bytedance/stable-diffusion-xl-lightning'; break;
         case 'stable-diffusion-v1-5-inpainting': model = '@cf/runwayml/stable-diffusion-v1-5-inpainting'; break;
-        case 'phoenix-1.0'; model = '@cf/leonardo/phoenix-1.0'; break;
+        case 'phoenix-1.0': model = '@cf/leonardo/phoenix-1.0'; break;
       }
       const inputs = { prompt: data.prompt };
       const response = await env.AI.run(model, inputs);
