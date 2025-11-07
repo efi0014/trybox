@@ -133,6 +133,8 @@ export async function onRequest(context) {
         case 'dreamshaper-8-lcm': model = '@cf/lykon/dreamshaper-8-lcm'; break;
         case 'stable-diffusion-xl-base-1.0': model = '@cf/stabilityai/stable-diffusion-xl-base-1.0'; break;
         case 'stable-diffusion-xl-lightning': model = '@cf/bytedance/stable-diffusion-xl-lightning'; break;
+        case 'stable-diffusion-v1-5-inpainting': model = '@cf/runwayml/stable-diffusion-v1-5-inpainting'; break;
+        case 'phoenix-1.0'; model = '@cf/leonardo/phoenix-1.0'; break;
       }
       const inputs = { prompt: data.prompt };
       const response = await env.AI.run(model, inputs);
