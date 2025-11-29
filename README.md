@@ -5,4 +5,4 @@ https://trybox.dpdns.org
 或者成为互联网角落的尘埃  
 但愿不要如此  
 
-本项目在MIT协议下使用了Liquid-glass-react(https://github.com/rdev/liquid-glass-react)库
+本项目在MIT协议下使用了[Liquid-glass-react](https://github.com/rdev/liquid-glass-react)库
